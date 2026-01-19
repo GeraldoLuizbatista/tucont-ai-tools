@@ -1,0 +1,103 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tool {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  description   String
+  logo          String   // emoji ou URL da imagem
+  link          String
+  affiliateLink String?  // Link de afiliado (rastreável)
+  categoryId    String
+  category      Category @relation(fields: [categoryId], references: [id])
+  subcategory   String
+  featured      Boolean  @default(false)
+  active        Boolean  @default(true)
+  clicks        Click[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([slug])
+  @@index([featured])
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  icon      String
+  order     Int      @default(0)
+  tools     Tool[]
+  createdAt DateTime @default(now())
+
+  @@index([slug])
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  company   String?
+  phone     String?
+  interest  String   // "consultoria", "ferramentas", "treinamento"
+  message   String?
+  source    String   // "modal", "footer", "contact_page"
+  status    String   @default("novo") // novo, contatado, qualificado, convertido
+  notes     String?
+  createdAt DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model NewsItem {
+  id          String   @id @default(cuid())
+  title       String
+  summary     String   @db.Text
+  url         String
+  source      String
+  imageUrl    String?
+  publishedAt DateTime
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  @@index([publishedAt])
+  @@index([active])
+}
+
+model Click {
+  id        String   @id @default(cuid())
+  toolId    String
+  tool      Tool     @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([toolId])
+  @@index([createdAt])
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("admin") // admin, editor
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
+}
