@@ -60,16 +60,16 @@ export default function Home() {
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center space-x-4">
               <img 
-                src="https://iuptec.com.br/wp-content/uploads/2024/01/logo-iuptec-oficial-fundo-escuro.png" 
+                src="/Logo-Iuptec.png" 
                 alt="Iuptec Logo" 
                 className="h-12 w-auto"
               />
               <div className="h-12 w-px bg-gradient-to-b from-primary-orange to-primary-cyan"></div>
               <div>
                 <h1 className="text-2xl font-bold gradient-text">
-                  Tucont AI Tools
+                  Tools
                 </h1>
-                <p className="text-xs text-gray-400">Powered by Iuptec</p>
+                <p className="text-xs text-gray-400">by Tucont</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -324,11 +324,11 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
             <div>
               <img 
-                src="https://iuptec.com.br/wp-content/uploads/2024/01/logo-iuptec-oficial-fundo-escuro.png" 
+                src="/Logo-Iuptec.png" 
                 alt="Iuptec Logo" 
-                className="h-10 w-auto mb-4"
+                className="h-12 w-auto"
               />
-              <h4 className="font-bold text-lg mb-4 gradient-text">Tucont AI Tools</h4>
+              <h4 className="font-bold text-lg mb-4 gradient-text">AI Tools</h4>
               <p className="text-gray-400 text-sm">
                 Catálogo curado das melhores ferramentas de Inteligência Artificial do mercado.
               </p>
@@ -356,7 +356,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-white/10 pt-8 text-center text-sm text-gray-400">
-            <p>© 2026 Tucont AI Tools - Powered by <a href="https://iuptec.com.br" className="text-primary-orange hover:text-primary-cyan transition font-semibold">Iuptec</a></p>
+            <p>© 2026 Iuptec AI Tools - Powered by <a href="https://tucont.com.br" className="text-primary-orange hover:text-primary-cyan transition font-semibold">Tucont</a></p>
           </div>
         </div>
       </footer>
