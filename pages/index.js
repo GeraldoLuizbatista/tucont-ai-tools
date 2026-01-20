@@ -26,27 +26,9 @@ export default function Home() {
     })
   }, [tools, search, selectedCategory, showOnlyFeatured])
 
-  const handleToolClick = async (toolId, link) => {
-    // Disparar evento para o modal
-    const event = new Event('toolClick')
-    document.dispatchEvent(event)
-
-    try {
-      const response = await fetch('/api/track-click', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ toolId })
-      })
-
-      const data = await response.json()
-      
-      // Redirecionar para o link do banco de dados
-      window.open(data.redirectUrl || link, '_blank')
-    } catch (error) {
-      // Fallback: abrir link direto
-      window.open(link, '_blank')
-    }
-  }
+const handleToolClick = (toolId, toolLink) => {
+  window.open(toolLink, '_blank', 'noopener,noreferrer');
+};
 
   return (
     <div className="min-h-screen">
@@ -284,15 +266,12 @@ export default function Home() {
                         {tool.description}
                       </p>
                       
-<button
-  onClick={() => {
-    console.log('Botão clicado! Tool ID:', tool.id, 'Link:', tool.link)
-    handleToolClick(tool.id, tool.link)
-  }}
-  className="block w-full bg-gradient-to-r from-primary-orange to-primary-cyan text-dark-bg text-center py-4 rounded-2xl font-bold hover:scale-105 transition glow-orange"
->
-  Acessar Ferramenta →
-</button>
+                      <button
+                        onClick={() => handleToolClick(tool.id, tool.link)}
+                        className="block w-full bg-gradient-to-r from-primary-orange to-primary-cyan text-dark-bg text-center py-4 rounded-2xl font-bold hover:scale-105 transition glow-orange"
+                      >
+                        Acessar Ferramenta →
+                      </button>
                     </div>
                   </div>
                 ))}
