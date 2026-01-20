@@ -54,8 +54,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Toaster position="top-center" />
-      <LeadCaptureModal />
+        <LeadCaptureModal />
 
       {/* HEADER */}
       <header className="glass-card sticky top-0 z-50 border-b border-white/10">
@@ -292,8 +291,18 @@ export default function Home() {
                       
                       {/* ✅ CORREÇÃO 1: Agora abre IMEDIATAMENTE */}
                       <button
-                        onClick={() => handleToolClick(tool.id, tool.link)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          console.log('🔴 CLIQUE!', tool.name, tool.link);
+                          handleToolClick(tool.id, tool.link);
+                        }}
                         className="block w-full bg-gradient-to-r from-primary-orange to-primary-cyan text-dark-bg text-center py-4 rounded-2xl font-bold hover:scale-105 transition glow-orange"
+                        style={{
+                          pointerEvents: 'auto',
+                          cursor: 'pointer',
+                          position: 'relative',
+                          zIndex: 10
+                        }}
                       >
                         Acessar Ferramenta →
                       </button>
