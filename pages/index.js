@@ -31,7 +31,6 @@ export default function Home() {
     const event = new Event('toolClick')
     document.dispatchEvent(event)
 
-    // Registrar clique
     try {
       const response = await fetch('/api/track-click', {
         method: 'POST',
@@ -41,7 +40,7 @@ export default function Home() {
 
       const data = await response.json()
       
-      // Redirecionar para o link de afiliado
+      // Redirecionar para o link do banco de dados
       window.open(data.redirectUrl || link, '_blank')
     } catch (error) {
       // Fallback: abrir link direto

@@ -4,27 +4,30 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const { toolId } = req.body
-      const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
-      const userAgent = req.headers['user-agent']
+      
+      // Buscar o link da ferramenta no banco de dados
+      const tool = await prisma.tool.findUnique({
+        where: { id: toolId },
+        select: { link: true }  // Busca APENAS o campo 'link'
+      })
 
-      // Registrar clique
+      if (!tool) {
+        return res.status(404).json({ error: 'Ferramenta não encontrada' })
+      }
+
+      // Registrar o clique (opcional - pode remover se não quiser)
       await prisma.click.create({
         data: {
           toolId,
-          ip,
-          userAgent
+          ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+          userAgent: req.headers['user-agent']
         }
       })
 
-      // Buscar link de afiliado
-      const tool = await prisma.tool.findUnique({
-        where: { id: toolId },
-        select: { affiliateLink: true }
-      })
-
+      // Retornar o link para redirecionamento
       return res.status(200).json({ 
         success: true,
-        redirectUrl: tool?.affiliateLink 
+        redirectUrl: tool.link  // Usa o link normal da ferramenta
       })
     } catch (error) {
       console.error(error)
