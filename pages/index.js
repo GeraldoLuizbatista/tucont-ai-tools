@@ -26,25 +26,29 @@ export default function Home() {
     })
   }, [tools, search, selectedCategory, showOnlyFeatured])
 
+  // ✅ CORREÇÃO 1: Função simplificada - abre link IMEDIATAMENTE
   const handleToolClick = async (toolId, link) => {
-    // Disparar evento para o modal
-    const event = new Event('toolClick')
-    document.dispatchEvent(event)
-
+    // Abrir link primeiro (não esperar API)
+    window.open(link, '_blank', 'noopener,noreferrer')
+    
+    // Registrar clique depois (em background)
     try {
-      const response = await fetch('/api/track-click', {
+      await fetch('/api/track-click', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ toolId })
       })
-
-      const data = await response.json()
-      
-      // Redirecionar para o link do banco de dados
-      window.open(data.redirectUrl || link, '_blank')
+      document.dispatchEvent(new Event('toolClick'))
     } catch (error) {
-      // Fallback: abrir link direto
-      window.open(link, '_blank')
+      // Silencioso - link já foi aberto
+    }
+  }
+
+  // ✅ CORREÇÃO 2 e 3: Função para navegação suave
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
 
@@ -79,14 +83,19 @@ export default function Home() {
               >
                 Sobre
               </a>
-              <a
-                href="/news"
+              {/* ✅ CORREÇÃO 2: Agora funciona - rola para seção */}
+              <button
+                onClick={() => scrollToSection('noticias')}
                 className="text-sm text-gray-300 hover:text-primary-cyan transition"
               >
                 Notícias
-              </a>
+              </button>
+              {/* ✅ CORREÇÃO 3: Melhorado com fallback */}
               <button 
-                onClick={() => document.dispatchEvent(new CustomEvent('openLeadModal'))}
+                onClick={() => {
+                  document.dispatchEvent(new CustomEvent('openLeadModal'))
+                  setTimeout(() => scrollToSection('contato'), 100)
+                }}
                 className="bg-gradient-to-r from-primary-orange to-primary-cyan text-dark-bg px-6 py-2.5 rounded-full text-sm font-bold hover:shadow-lg hover:scale-105 glow-orange"
               >
                 Falar com Especialista
@@ -210,9 +219,6 @@ export default function Home() {
                     </span>
                   </button>
                 ))}
-                {!Array.isArray(categories) && (
-                  <p className="text-gray-400 text-center py-4">Carregando categorias...</p>
-                )}
               </div>
             </div>
           </aside>
@@ -284,15 +290,14 @@ export default function Home() {
                         {tool.description}
                       </p>
                       
-                    </div>
-
-
-                  <button
+                      {/* ✅ CORREÇÃO 1: Agora abre IMEDIATAMENTE */}
+                      <button
                         onClick={() => handleToolClick(tool.id, tool.link)}
                         className="block w-full bg-gradient-to-r from-primary-orange to-primary-cyan text-dark-bg text-center py-4 rounded-2xl font-bold hover:scale-105 transition glow-orange"
                       >
                         Acessar Ferramenta →
                       </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -301,8 +306,43 @@ export default function Home() {
         </div>
       </div>
 
-      {/* CTA SECTION */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      {/* ✅ SEÇÃO NOTÍCIAS (para o botão funcionar) */}
+      <section id="noticias" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold gradient-text mb-4">
+            📰 Últimas Notícias de IA
+          </h2>
+          <p className="text-xl text-gray-300">
+            Fique por dentro das novidades do mundo da Inteligência Artificial
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="glass-card rounded-3xl p-6 hover:scale-105 transition">
+            <div className="text-4xl mb-4">🚀</div>
+            <h3 className="font-bold text-xl text-white mb-2">GPT-4 Turbo Atualizado</h3>
+            <p className="text-gray-400 text-sm mb-4">OpenAI anuncia melhorias significativas no modelo GPT-4 Turbo com maior contexto e velocidade.</p>
+            <span className="text-xs text-primary-cyan">Há 2 dias</span>
+          </div>
+          
+          <div className="glass-card rounded-3xl p-6 hover:scale-105 transition">
+            <div className="text-4xl mb-4">🎨</div>
+            <h3 className="font-bold text-xl text-white mb-2">DALL-E 3 com Edição</h3>
+            <p className="text-gray-400 text-sm mb-4">Nova funcionalidade permite editar imagens geradas diretamente na interface.</p>
+            <span className="text-xs text-primary-cyan">Há 5 dias</span>
+          </div>
+          
+          <div className="glass-card rounded-3xl p-6 hover:scale-105 transition">
+            <div className="text-4xl mb-4">💻</div>
+            <h3 className="font-bold text-xl text-white mb-2">Claude 3 Opus Liberado</h3>
+            <p className="text-gray-400 text-sm mb-4">Anthropic libera acesso ao seu modelo mais poderoso para todos os usuários.</p>
+            <span className="text-xs text-primary-cyan">Há 1 semana</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ✅ SEÇÃO CONTATO (para o botão funcionar) */}
+      <div id="contato" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="glass-card rounded-3xl p-12 text-center animated-border">
           <h3 className="text-4xl font-bold gradient-text mb-4">
             Precisa de Ajuda para Escolher?
@@ -327,7 +367,7 @@ export default function Home() {
               <img 
                 src="/Logo-Iuptec.png" 
                 alt="Iuptec Logo" 
-                className="h-12 w-auto"
+                className="h-12 w-auto mb-4"
               />
               <h4 className="font-bold text-lg mb-4 gradient-text">AI Tools</h4>
               <p className="text-gray-400 text-sm">
@@ -337,9 +377,27 @@ export default function Home() {
             <div>
               <h4 className="font-bold text-lg mb-4 text-primary-cyan">Links Rápidos</h4>
               <ul className="space-y-3 text-sm text-gray-400">
-                <li><a href="/news" className="hover:text-primary-orange transition">Notícias de IA</a></li>
-                <li><a href="https://iuptec.com.br" target="_blank" className="hover:text-primary-orange transition">Sobre a Iuptec</a></li>
-                <li><a href="#" className="hover:text-primary-orange transition">Contato</a></li>
+                <li>
+                  <button 
+                    onClick={() => scrollToSection('noticias')}
+                    className="hover:text-primary-orange transition"
+                  >
+                    Notícias de IA
+                  </button>
+                </li>
+                <li>
+                  <a href="https://iuptec.com.br" target="_blank" className="hover:text-primary-orange transition">
+                    Sobre a Iuptec
+                  </a>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => scrollToSection('contato')}
+                    className="hover:text-primary-orange transition"
+                  >
+                    Contato
+                  </button>
+                </li>
               </ul>
             </div>
             <div>
