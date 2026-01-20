@@ -284,12 +284,15 @@ export default function Home() {
                         {tool.description}
                       </p>
                       
-                        <button
-                          onClick={() => window.open(tool.link, '_blank')}
-                          className="block w-full bg-gradient-to-r from-primary-orange to-primary-cyan text-dark-bg text-center py-4 rounded-2xl font-bold hover:scale-105 transition glow-orange"
-                        >
-                          Acessar Ferramenta →
-                        </button>
+<button
+  onClick={() => {
+    console.log('Botão clicado! Tool ID:', tool.id, 'Link:', tool.link)
+    handleToolClick(tool.id, tool.link)
+  }}
+  className="block w-full bg-gradient-to-r from-primary-orange to-primary-cyan text-dark-bg text-center py-4 rounded-2xl font-bold hover:scale-105 transition glow-orange"
+>
+  Acessar Ferramenta →
+</button>
                     </div>
                   </div>
                 ))}
